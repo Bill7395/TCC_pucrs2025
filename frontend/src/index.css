@@ -1,0 +1,33 @@
+:root {
+  --pink: #FF1493;
+  --dark-blue: #191970;
+  --white: #FFFFFF;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--white);
+  color: var(--dark-blue);
+}
+
+a {
+  color: var(--pink);
+  text-decoration: none;
+}
+
+button {
+  background-color: var(--pink);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+input, select, textarea {
+  padding: 10px;
+  border: 1px solid var(--dark-blue);
+  border-radius: 4px;
+  margin-top: 5px;
+}

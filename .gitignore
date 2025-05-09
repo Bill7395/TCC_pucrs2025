@@ -1,0 +1,17 @@
+# Ignorar node_modules em frontend e backend
+frontend/node_modules/
+backend/node_modules/
+
+# Ignorar arquivos de build (se houver)
+frontend/build/
+backend/dist/
+
+# Ignorar arquivos de configuração sensíveis
+.env
+*.env.local
+*.env.development
+*.env.production
+
+# Ignorar logs e arquivos temporários
+*.log
+.DS_Store
