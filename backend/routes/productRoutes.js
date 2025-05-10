@@ -23,9 +23,10 @@ router.get('/', getAllProducts);
 // Buscar produtos
 router.get('/search', searchProducts);
 
-// Obter detalhes de um produto
-router.get('/:id', getProductById);
+// Obter produtos do vendedor logado
+router.get('/mine', auth, getMyProducts);
 
-router.get('/mine', auth, getMyProducts); // /api/products/mine
+// Obter detalhes de um produto por ID
+router.get('/:id', getProductById);
 
 module.exports = router;

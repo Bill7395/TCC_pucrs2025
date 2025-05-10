@@ -2,56 +2,24 @@ const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    rating: { type: Number, required: true, min: 1, max: 5 },
-    comment: { type: String, trim: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    rating: { type: Number, required: true },
+    comment: { type: String },
   },
   { timestamps: true }
 );
 
 const productSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: 3,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    image: {
-      type: String,
-      trim: true,
-    },
-    category: {
-      type: String,
-      trim: true,
-    },
-    seller: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
+    title: { type: String, required: true },
+    description: { type: String },
+    price: { type: Number, required: true },
+    image: { type: String },
+    category: { type: String },
+    seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    stock: { type: Number, required: true, min: 0 },
     reviews: [reviewSchema],
-    averageRating: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 5,
-    },
+    averageRating: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

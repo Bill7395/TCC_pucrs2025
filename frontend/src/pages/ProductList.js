@@ -15,11 +15,17 @@ const ProductList = () => {
     <div>
       <h2>Produtos disponíveis</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-        {products.map(p => (
-          <div key={p._id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px' }}>
-            <h3>{p.title}</h3>
-            <p><strong>R$ {p.price.toFixed(2)}</strong></p>
-            <Link to={`/product/${p._id}`}>Ver detalhes</Link>
+        {products.map(product => (
+          <div key={product._id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '10px' }}>
+            <h3>{product.title}</h3>
+            <p><strong>R$ {product.price ? product.price.toFixed(2) : 'N/A'}</strong></p>
+            {product.stock === 0 ? (
+              <span style={{ color: 'red' }}>Indisponível</span>
+            ) : (
+              <span>Estoque: {product.stock}</span>
+            )}
+            <br /> {/* Adiciona uma quebra de linha para separar o estoque do link */}
+            <Link to={`/product/${product._id}`}>Ver detalhes</Link>
           </div>
         ))}
       </div>

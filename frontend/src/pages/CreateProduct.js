@@ -1,129 +1,91 @@
 import React, { useState } from 'react';
-import API from '../api/api';
+import axios from 'axios';
 
 const CreateProduct = () => {
-  const [productData, setProductData] = useState({
-    title: '',
-    price: '',
-    description: '',
-    category: '',
-    image: '',
-  });
-
-  const [error, setError] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [image, setImage] = useState('');
+  const [category, setCategory] = useState('');
+  const [stock, setStock] = useState('');
+  const [message, setMessage] = useState('');
   const [uploading, setUploading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      setMessage('Por favor, envie apenas arquivos de imagem.');
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
+    formData.append('upload_preset', 'tcc2025'); // Seu preset
+    setUploading(true);
 
     try {
-      setUploading(true);
-      const res = await API.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log('Upload OK, URL:', res.data.imageUrl);
-      setProductData({ ...productData, image: res.data.imageUrl });
+      const res = await axios.post(
+        'https://api.cloudinary.com/v1_1/doojyevce/image/upload', // Seu cloud name
+        formData
+      );
+      setImage(res.data.secure_url);
+      setUploading(false);
+      setMessage('Imagem enviada com sucesso!');
     } catch (err) {
-      console.error('Erro no upload:', err.response?.data || err.message);
-      setError('Erro ao carregar imagem');
-    } finally {
+      console.error('Erro detalhado:', err.response?.data || err.message);
+      setMessage('Falha no upload da imagem.');
       setUploading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!productData.image) {
-      return setError('Envie uma imagem do produto antes de continuar.');
-    }
-
     try {
-      await API.post('/products', productData);
-      alert('Produto criado com sucesso!');
-      setProductData({
-        title: '',
-        price: '',
-        description: '',
-        category: '',
-        image: '',
+      const token = localStorage.getItem('token');
+      const res = await axios.post('/api/products', {
+        title,
+        description,
+        price,
+        image,
+        category,
+        stock,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setError('');
+
+      setMessage('Produto criado com sucesso!');
+      // Opcional: resetar o formulário
+      setTitle('');
+      setDescription('');
+      setPrice('');
+      setImage('');
+      setCategory('');
+      setStock('');
     } catch (err) {
       console.error('Erro ao criar produto:', err.response?.data || err.message);
-      setError('Erro ao criar produto');
+      setMessage('Erro ao criar produto.');
     }
   };
 
   return (
-    <div>
-      <h2>Cadastrar Produto</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>Nome do Produto</label>
-        <input
-          type="text"
-          name="title"
-          value={productData.title}
-          onChange={handleChange}
-          required
-        />
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Título" value={title} onChange={(e) => setTitle(e.target.value)} required />
+      <input type="text" placeholder="Descrição" value={description} onChange={(e) => setDescription(e.target.value)} />
+      <input type="number" placeholder="Preço" value={price} onChange={(e) => setPrice(e.target.value)} required />
 
-        <label>Preço</label>
-        <input
-          type="number"
-          name="price"
-          value={productData.price}
-          onChange={handleChange}
-          required
-        />
+      {/* Upload de Imagem */}
+      <input type="file" accept="image/*" onChange={handleImageUpload} />
+      {uploading && <p>Enviando imagem...</p>}
+      {image && <p>Imagem enviada com sucesso!</p>}
 
-        <label>Descrição</label>
-        <textarea
-          name="description"
-          value={productData.description}
-          onChange={handleChange}
-          required
-        />
+      <input type="text" placeholder="Categoria" value={category} onChange={(e) => setCategory(e.target.value)} />
+      <input type="number" placeholder="Estoque" value={stock} onChange={(e) => setStock(e.target.value)} required />
 
-        <label>Categoria</label>
-        <input
-          type="text"
-          name="category"
-          value={productData.category}
-          onChange={handleChange}
-        />
-
-        <label>Imagem do Produto</label>
-        <input type="file" name="image" onChange={handleImageUpload} />
-        {uploading && <p>Carregando imagem...</p>}
-        {productData.image && (
-          <img
-            src={productData.image}
-            alt="Preview"
-            style={{ width: '150px', marginTop: '10px' }}
-          />
-        )}
-
-        <br />
-        <button type="submit">Criar Produto</button>
-      </form>
-    </div>
+      <button type="submit" disabled={uploading}>Criar Produto</button>
+      {message && <p>{message}</p>}
+    </form>
   );
 };
 
