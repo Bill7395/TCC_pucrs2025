@@ -13,7 +13,7 @@ exports.createProduct = async (req, res) => {
       image,
       category,
       seller: req.user.userId, // exige autenticação
-      stock
+      
     });
 
     await product.save();
