@@ -19,6 +19,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use(productRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)

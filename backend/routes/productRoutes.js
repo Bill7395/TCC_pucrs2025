@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
+const productController = require('../controllers/productController');
 
 const {
   createProduct,
@@ -28,5 +29,7 @@ router.get('/mine', auth, getMyProducts);
 
 // Obter detalhes de um produto por ID
 router.get('/:id', getProductById);
+
+router.post('/api/products', productController.createProduct);
 
 module.exports = router;
